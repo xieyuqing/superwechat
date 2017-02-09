@@ -174,7 +174,7 @@ public class UserProfileManager {
 					if (result != null && result.isRetMsg()) {
 						User user = (User) result.getRetData();
 						//save user info to db
-						setCurrentUserNick(user.getMUserNick());
+//						setCurrentUserNick(user.getMUserNick());
 					}
 				}
 			}
