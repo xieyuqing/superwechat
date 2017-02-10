@@ -47,14 +47,12 @@ import com.hyphenate.chat.EMCmdMessageBody;
 import com.hyphenate.chat.EMConversation;
 import com.hyphenate.chat.EMConversation.EMConversationType;
 import com.hyphenate.chat.EMMessage;
-import com.hyphenate.easeui.domain.User;
 import com.hyphenate.easeui.utils.EaseCommonUtils;
 import com.hyphenate.util.EMLog;
 import com.umeng.analytics.MobclickAgent;
 import com.umeng.update.UmengUpdateAgent;
 
 import java.util.List;
-import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -67,26 +65,25 @@ import cn.ucai.superwechat.db.InviteMessgeDao;
 import cn.ucai.superwechat.db.UserDao;
 import cn.ucai.superwechat.runtimepermissions.PermissionsManager;
 import cn.ucai.superwechat.runtimepermissions.PermissionsResultAction;
-import cn.ucai.superwechat.utils.L;
 import cn.ucai.superwechat.widget.DMTabHost;
 import cn.ucai.superwechat.widget.MFViewPager;
 
 @SuppressLint("NewApi")
-public class MainActivity extends BaseActivity implements DMTabHost.OnCheckedChangeListener,ViewPager.OnPageChangeListener{
+public class MainActivity extends BaseActivity implements DMTabHost.OnCheckedChangeListener,ViewPager.OnPageChangeListener {
 
-    protected static final String TAG = MainActivity.class.getSimpleName();
+    protected static final String TAG = "MainActivity";
     @BindView(R.id.txt_left)
-    TextView txtLeft;
+    TextView mTxtLeft;
     @BindView(R.id.img_right)
-    ImageView imgRight;
+    ImageView mImgRight;
     @BindView(R.id.layout_viewpage)
-    MFViewPager layoutViewpage;
+    MFViewPager mLayoutViewpage;
     @BindView(R.id.layout_tabhost)
-    DMTabHost layoutTabhost;
+    DMTabHost mLayoutTabhost;
     // textview for unread message count
-//    private TextView unreadLabel;
+    //private TextView unreadLabel;
     // textview for unread event message
-//    private TextView unreadAddressLable;
+    //private TextView unreadAddressLable;
 
     private Button[] mTabs;
     private ContactListFragment contactListFragment;
@@ -98,7 +95,8 @@ public class MainActivity extends BaseActivity implements DMTabHost.OnCheckedCha
     // user account was removed
     private boolean isCurrentAccountRemoved = false;
 
-    MainTabAdpter adpter;
+    MainTabAdpter adapter;
+
     /**
      * check if current user account was remove
      */
@@ -112,7 +110,6 @@ public class MainActivity extends BaseActivity implements DMTabHost.OnCheckedCha
         savePower();
         checkAccount(savedInstanceState);
 
-
         setContentView(R.layout.em_activity_main);
         ButterKnife.bind(this);
         // runtime permission for android 6.0, just require all permissions here for simple
@@ -120,7 +117,6 @@ public class MainActivity extends BaseActivity implements DMTabHost.OnCheckedCha
 
         initView();
         initUment();
-
         showExceptionDialogFromIntent(getIntent());
 
         inviteMessgeDao = new InviteMessgeDao(this);
@@ -130,36 +126,25 @@ public class MainActivity extends BaseActivity implements DMTabHost.OnCheckedCha
         //register broadcast receiver to receive the change of group from DemoHelper
         registerBroadcastReceiver();
 
-
         EMClient.getInstance().contactManager().setContactListener(new MyContactListener());
         //debug purpose only
         registerInternalDebugReceiver();
-
-        String username = EMClient.getInstance().getCurrentUser();
-        L.e(TAG, "username=" + username);
-        Map<String, User> map = SuperWeChatHelper.getInstance().getAppContactList();
-        L.e(TAG, "map=" + map.get(username));
     }
 
     private void initFragment() {
         conversationListFragment = new ConversationListFragment();
         contactListFragment = new ContactListFragment();
-        SettingsFragment settingFragment = new SettingsFragment();
-        fragments = new Fragment[]{conversationListFragment, contactListFragment, settingFragment};
+        ProfileFragment profileFragment = new ProfileFragment();
 
-//		getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, conversationListFragment)
-//				.add(R.id.fragment_container, contactListFragment).hide(contactListFragment).show(conversationListFragment)
-//				.commit();
-        adpter = new MainTabAdpter(getSupportFragmentManager());
-        adpter.addFragment(conversationListFragment,"微信");
-        adpter.addFragment(contactListFragment,"通讯录");
-        adpter.addFragment(new DiscoverFragment(),"发现");
-        adpter.addFragment(settingFragment,"我");
-        layoutViewpage.setAdapter(adpter);
-        layoutViewpage.setCurrentItem(0);
-        layoutTabhost.setChecked(0);
-        layoutTabhost.setOnCheckedChangeListener(this);
-        layoutViewpage.setOnPageChangeListener(this);
+        adapter = new MainTabAdpter(getSupportFragmentManager());
+        adapter.addFragment(conversationListFragment,"微信");
+        adapter.addFragment(contactListFragment,"通讯录");
+        adapter.addFragment(new DiscoverFragment(),"发现");
+        adapter.addFragment(profileFragment,"我");
+        mLayoutViewpage.setAdapter(adapter);
+        mLayoutTabhost.setChecked(0);
+        mLayoutTabhost.setOnCheckedChangeListener(this);
+        mLayoutViewpage.setOnPageChangeListener(this);
     }
 
     private void initUment() {
@@ -167,7 +152,6 @@ public class MainActivity extends BaseActivity implements DMTabHost.OnCheckedCha
         MobclickAgent.updateOnlineConfig(this);
         UmengUpdateAgent.setUpdateOnlyWifi(false);
         UmengUpdateAgent.update(this);
-
     }
 
     private void checkAccount(Bundle savedInstanceState) {
@@ -187,7 +171,7 @@ public class MainActivity extends BaseActivity implements DMTabHost.OnCheckedCha
     private void savePower() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             String packageName = getPackageName();
-            PowerManager pm = (PowerManager) getSystemService(POWER_SERVICE);
+            PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
             if (!pm.isIgnoringBatteryOptimizations(packageName)) {
                 Intent intent = new Intent();
                 intent.setAction(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
@@ -224,10 +208,9 @@ public class MainActivity extends BaseActivity implements DMTabHost.OnCheckedCha
 //		mTabs[2] = (Button) findViewById(R.id.btn_setting);
 //		// select first tab
 //		mTabs[0].setSelected(true);
-        txtLeft.setVisibility(View.VISIBLE);
-        imgRight.setVisibility(View.VISIBLE);
+        mTxtLeft.setVisibility(View.VISIBLE);
+        mImgRight.setVisibility(View.VISIBLE);
     }
-
 
     /**
      * on tab clicked
@@ -369,8 +352,7 @@ public class MainActivity extends BaseActivity implements DMTabHost.OnCheckedCha
 
     @Override
     public void onPageSelected(int i) {
-//        layoutViewpage.setCurrentItem(i);
-        layoutTabhost.setChecked(i);
+        mLayoutTabhost.setChecked(i);
     }
 
     @Override
@@ -380,7 +362,7 @@ public class MainActivity extends BaseActivity implements DMTabHost.OnCheckedCha
 
     @Override
     public void onCheckedChange(int checkedPosition, boolean byUser) {
-        layoutViewpage.setCurrentItem(checkedPosition,false);
+        mLayoutViewpage.setCurrentItem(checkedPosition,false);
     }
 
     public class MyContactListener implements EMContactListener {
@@ -443,28 +425,28 @@ public class MainActivity extends BaseActivity implements DMTabHost.OnCheckedCha
      */
     public void updateUnreadLabel() {
         int count = getUnreadMsgCountTotal();
-//        if (count > 0) {
-//            unreadLabel.setText(String.valueOf(count));
-//            unreadLabel.setVisibility(View.VISIBLE);
-//        } else {
-//            unreadLabel.setVisibility(View.INVISIBLE);
-//        }
+//		if (count > 0) {
+//			unreadLabel.setText(String.valueOf(count));
+//			unreadLabel.setVisibility(View.VISIBLE);
+//		} else {
+//			unreadLabel.setVisibility(View.INVISIBLE);
+//		}
     }
 
     /**
      * update the total unread count
      */
     public void updateUnreadAddressLable() {
-//        runOnUiThread(new Runnable() {
-//            public void run() {
-//                int count = getUnreadAddressCountTotal();
-//                if (count > 0) {
-//                    unreadAddressLable.setVisibility(View.VISIBLE);
-//                } else {
-//                    unreadAddressLable.setVisibility(View.INVISIBLE);
-//                }
-//            }
-//        });
+//		runOnUiThread(new Runnable() {
+//			public void run() {
+//				int count = getUnreadAddressCountTotal();
+//				if (count > 0) {
+//					unreadAddressLable.setVisibility(View.VISIBLE);
+//				} else {
+//					unreadAddressLable.setVisibility(View.INVISIBLE);
+//				}
+//			}
+//		});
 
     }
 
