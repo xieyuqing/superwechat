@@ -11,6 +11,7 @@ import cn.ucai.superwechat.ui.LoginActivity;
 import cn.ucai.superwechat.ui.RegisterActivity;
 import cn.ucai.superwechat.ui.SettingsActivity;
 import cn.ucai.superwechat.ui.SplashActivity;
+import cn.ucai.superwechat.ui.UserProfileActivity;
 
 
 /**
@@ -52,6 +53,10 @@ public class MFGT {
     public static void gotoLoginCleanTask(SettingsActivity activity) {
         startActivity(activity, new Intent(activity,LoginActivity.class)
                         .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK));
+    }
+
+    public static void gotoUserProfile(FragmentActivity activity) {
+        startActivity(activity, UserProfileActivity.class);
     }
 }
 
