@@ -38,6 +38,7 @@ import cn.ucai.superwechat.utils.CommonUtils;
 import cn.ucai.superwechat.utils.L;
 import cn.ucai.superwechat.utils.MFGT;
 import cn.ucai.superwechat.utils.OkHttpUtils;
+import cn.ucai.superwechat.utils.PreferenceManager;
 import cn.ucai.superwechat.utils.ResultUtils;
 
 public class UserProfileActivity extends BaseActivity implements OnClickListener {
@@ -148,11 +149,14 @@ public class UserProfileActivity extends BaseActivity implements OnClickListener
 						if (s != null) {
 							Result result = ResultUtils.getResultFromJson(s, User.class);
 							if (result != null) {
-								if (result != null) {
+								if (result.isRetMsg()) {
 									User user = (User) result.getRetData();
 									if (user != null) {
 										L.e(TAG,"user="+user);
-										CommonUtils.showShortToast(R.string.toast_updatenick_fail);
+										PreferenceManager.getInstance().setCurrentUserNick(nickName);
+										SuperWeChatHelper.getInstance().saveAppContact(user);
+										mTvUserinfoNick.setText(nickName);
+										CommonUtils.showShortToast(R.string.toast_updatenick_success);
 									}
 								} else {
 									if (result.getRetCode() == I.MSG_USER_SAME_NICK) {
