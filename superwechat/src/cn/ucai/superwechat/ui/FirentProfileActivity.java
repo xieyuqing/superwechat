@@ -88,7 +88,14 @@ public class FirentProfileActivity extends Activity {
     }
 
     @OnClick(R.id.img_back)
-    public void onClick() {
+    public void imgBack() {
         MFGT.finish(this);
     }
+
+    @OnClick(R.id.btn_add_contact)
+    public void sendAddContactMsg() {
+        MFGT.gotoAddFirent(this,user.getMUserName());
+    }
+
+
 }
