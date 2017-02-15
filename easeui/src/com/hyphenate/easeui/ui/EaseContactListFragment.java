@@ -53,7 +53,7 @@ import java.util.Map.Entry;
 
 /**
  * contact list
- * 
+ *
  */
 public class EaseContactListFragment extends EaseBaseFragment {
     private static final String TAG = "EaseContactListFragment";
@@ -68,10 +68,10 @@ public class EaseContactListFragment extends EaseBaseFragment {
     protected EaseContactList contactListLayout;
     protected boolean isConflict;
     protected FrameLayout contentContainer;
-    
+
     private Map<String, User> contactsMap;
 
-    
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.ease_fragment_contact_list, container, false);
@@ -79,7 +79,7 @@ public class EaseContactListFragment extends EaseBaseFragment {
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
-    	//to avoid crash when open app after long time stay in background after user logged into another device
+        //to avoid crash when open app after long time stay in background after user logged into another device
         if(savedInstanceState != null && savedInstanceState.getBoolean("isConflict", false))
             return;
         super.onActivityCreated(savedInstanceState);
@@ -88,10 +88,10 @@ public class EaseContactListFragment extends EaseBaseFragment {
     @Override
     protected void initView() {
         contentContainer = (FrameLayout) getView().findViewById(R.id.content_container);
-        
-        contactListLayout = (EaseContactList) getView().findViewById(R.id.contact_list);        
+
+        contactListLayout = (EaseContactList) getView().findViewById(R.id.contact_list);
         listView = contactListLayout.getListView();
-        
+
         //search
         query = (EditText) getView().findViewById(R.id.query);
         clearSearch = (ImageButton) getView().findViewById(R.id.search_clear);
@@ -100,15 +100,15 @@ public class EaseContactListFragment extends EaseBaseFragment {
     @Override
     protected void setUpView() {
         EMClient.getInstance().addConnectionListener(connectionListener);
-        
+
         contactList = new ArrayList<User>();
         getContactList();
         //init list
         contactListLayout.init(contactList);
-        
+
         if(listItemClickListener != null){
             listView.setOnItemClickListener(new OnItemClickListener() {
-    
+
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     EaseUser user = (EaseUser)listView.getItemAtPosition(position);
@@ -116,7 +116,7 @@ public class EaseContactListFragment extends EaseBaseFragment {
                 }
             });
         }
-        
+
         query.addTextChangedListener(new TextWatcher() {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 contactListLayout.filter(s);
@@ -124,7 +124,7 @@ public class EaseContactListFragment extends EaseBaseFragment {
                     clearSearch.setVisibility(View.VISIBLE);
                 } else {
                     clearSearch.setVisibility(View.INVISIBLE);
-                    
+
                 }
             }
 
@@ -141,7 +141,7 @@ public class EaseContactListFragment extends EaseBaseFragment {
                 hideSoftKeyboard();
             }
         });
-        
+
         listView.setOnTouchListener(new OnTouchListener() {
 
             @Override
@@ -150,7 +150,7 @@ public class EaseContactListFragment extends EaseBaseFragment {
                 return false;
             }
         });
-        
+
     }
 
 
@@ -206,30 +206,30 @@ public class EaseContactListFragment extends EaseBaseFragment {
                 }
             }
         }).start();
-        
+
     }
-    
+
     // refresh ui
     public void refresh() {
         getContactList();
         contactListLayout.refresh();
     }
-    
+
 
     @Override
     public void onDestroy() {
-        
+
         EMClient.getInstance().removeConnectionListener(connectionListener);
-        
+
         super.onDestroy();
     }
-    
+
 
     /**
      * get contact list and sort, will filter out users in blacklist
      */
     protected void getContactList() {
-        Log.e(TAG, "getContactList,contactList=" + contactList);
+        Log.e(TAG,"getContactList,contactList="+contactList);
         contactList.clear();
         if(contactsMap == null){
             return;
@@ -246,10 +246,10 @@ public class EaseContactListFragment extends EaseBaseFragment {
                         && !entry.getKey().equals("item_robots")
                         && !entry.getKey().equals(EMClient.getInstance().getCurrentUser())){
 //                    if(!blackList.contains(entry.getKey())){
-                        //filter out users in blacklist
-                        User user = entry.getValue();
-                        EaseCommonUtils.setAppUserInitialLetter(user);
-                        contactList.add(user);
+                    //filter out users in blacklist
+                    User user = entry.getValue();
+                    EaseCommonUtils.setAppUserInitialLetter(user);
+                    contactList.add(user);
 //                    }
                 }
             }
@@ -268,18 +268,18 @@ public class EaseContactListFragment extends EaseBaseFragment {
                     }else if("#".equals(rhs.getInitialLetter())){
                         return -1;
                     }
-                    return lhs.getInitialLetter().compareTo(
-                            rhs.getInitialLetter());
+                    return lhs.getInitialLetter().compareTo(rhs.getInitialLetter());
                 }
+
             }
         });
-        Log.e(TAG, "getContactList,contactList=" + contactList);
+        Log.e(TAG,"getContactList,contactList="+contactList);
     }
-    
-    
-    
+
+
+
     protected EMConnectionListener connectionListener = new EMConnectionListener() {
-        
+
         @Override
         public void onDisconnected(int error) {
             if (error == EMError.USER_REMOVED || error == EMError.USER_LOGIN_ANOTHER_DEVICE || error == EMError.SERVER_SERVICE_RESTRICTED) {
@@ -293,7 +293,7 @@ public class EaseContactListFragment extends EaseBaseFragment {
                 });
             }
         }
-        
+
         @Override
         public void onConnected() {
             getActivity().runOnUiThread(new Runnable() {
@@ -305,16 +305,16 @@ public class EaseContactListFragment extends EaseBaseFragment {
         }
     };
     private EaseContactListItemClickListener listItemClickListener;
-    
-    
+
+
     protected void onConnectionDisconnected() {
-        
+
     }
-    
+
     protected void onConnectionConnected() {
-        
+
     }
-    
+
     /**
      * set contacts map, key is the hyphenate id
      * @param contactsMap
@@ -322,15 +322,15 @@ public class EaseContactListFragment extends EaseBaseFragment {
     public void setContactsMap(Map<String, User> contactsMap){
         this.contactsMap = contactsMap;
     }
-    
+
     public interface EaseContactListItemClickListener {
         /**
-         * on click event for item in contact list 
+         * on click event for item in contact list
          * @param user --the user of item
          */
         void onListItemClicked(EaseUser user);
     }
-    
+
     /**
      * set contact list item click listener
      * @param listItemClickListener
@@ -338,5 +338,5 @@ public class EaseContactListFragment extends EaseBaseFragment {
     public void setContactListItemClickListener(EaseContactListItemClickListener listItemClickListener){
         this.listItemClickListener = listItemClickListener;
     }
-    
+
 }
