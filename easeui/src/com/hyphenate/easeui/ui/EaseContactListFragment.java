@@ -18,6 +18,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -228,6 +229,7 @@ public class EaseContactListFragment extends EaseBaseFragment {
      * get contact list and sort, will filter out users in blacklist
      */
     protected void getContactList() {
+        Log.e(TAG, "getContactList,contactList=" + contactList);
         contactList.clear();
         if(contactsMap == null){
             return;
@@ -241,12 +243,13 @@ public class EaseContactListFragment extends EaseBaseFragment {
                 if (!entry.getKey().equals("item_new_friends")
                         && !entry.getKey().equals("item_groups")
                         && !entry.getKey().equals("item_chatroom")
-                        && !entry.getKey().equals("item_robots")){
+                        && !entry.getKey().equals("item_robots")
+                        && !entry.getKey().equals(EMClient.getInstance().getCurrentUser())){
 //                    if(!blackList.contains(entry.getKey())){
-//                        //filter out users in blacklist
-//                        EaseUser user = entry.getValue();
-//                        EaseCommonUtils.setUserInitialLetter(user);
-//                        contactList.add(user);
+                        //filter out users in blacklist
+                        User user = entry.getValue();
+                        EaseCommonUtils.setAppUserInitialLetter(user);
+                        contactList.add(user);
 //                    }
                 }
             }
@@ -265,12 +268,12 @@ public class EaseContactListFragment extends EaseBaseFragment {
                     }else if("#".equals(rhs.getInitialLetter())){
                         return -1;
                     }
-                    return lhs.getInitialLetter().compareTo(rhs.getInitialLetter());
+                    return lhs.getInitialLetter().compareTo(
+                            rhs.getInitialLetter());
                 }
-
             }
         });
-
+        Log.e(TAG, "getContactList,contactList=" + contactList);
     }
     
     
