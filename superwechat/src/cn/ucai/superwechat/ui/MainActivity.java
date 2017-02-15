@@ -102,6 +102,7 @@ public class MainActivity extends BaseActivity implements DMTabHost.OnCheckedCha
 
     MainTabAdpter adapter;
     TitlePopup mTitlePopup;
+
     /**
      * check if current user account was remove
      */
@@ -214,7 +215,8 @@ public class MainActivity extends BaseActivity implements DMTabHost.OnCheckedCha
 //		mTabs[0].setSelected(true);
         mTxtLeft.setVisibility(View.VISIBLE);
         mImgRight.setVisibility(View.VISIBLE);
-        mTitlePopup = new TitlePopup(this, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        mTitlePopup = new TitlePopup(this, ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT);
         mTitlePopup.addAction(new ActionItem(this,R.string.menu_groupchat,R.drawable.icon_menu_group));
         mTitlePopup.addAction(new ActionItem(this,R.string.menu_addfriend,R.drawable.icon_menu_addfriend));
         mTitlePopup.addAction(new ActionItem(this,R.string.menu_qrcode,R.drawable.icon_menu_sao));
@@ -226,13 +228,13 @@ public class MainActivity extends BaseActivity implements DMTabHost.OnCheckedCha
         @Override
         public void onItemClick(ActionItem item, int position) {
             L.e(TAG,"item="+item+",position="+position);
-            switch (position) {
+            switch (position){
                 case 1:
                     MFGT.gotoAddContact(MainActivity.this);
                     break;
             }
         }
-    };
+    } ;
 
     /**
      * on tab clicked
@@ -243,6 +245,7 @@ public class MainActivity extends BaseActivity implements DMTabHost.OnCheckedCha
 //		switch (view.getId()) {
 //		case R.id.btn_conversation:
 //			index = 0;
+//			break;
 //		case R.id.btn_address_list:
 //			index = 1;
 //			break;
@@ -459,19 +462,19 @@ public class MainActivity extends BaseActivity implements DMTabHost.OnCheckedCha
      * update the total unread count
      */
     public void updateUnreadAddressLable() {
-		runOnUiThread(new Runnable() {
-			public void run() {
-				int count = getUnreadAddressCountTotal();
+        runOnUiThread(new Runnable() {
+            public void run() {
+                int count = getUnreadAddressCountTotal();
                 L.e(TAG,"updateUnreadAddressLable,count="+count);
-				if (count > 1) {
-                    mLayoutTabhost.setUnreadCount(1,count);
-                } else if (count == 1) {
-                    mLayoutTabhost.setHasNew(1, true);
+                if (count > 1) {
+                    mLayoutTabhost.setUnreadCount(1, count);
+                }else if(count==1){
+                    mLayoutTabhost.setHasNew(1,true);
                 } else {
                     mLayoutTabhost.setHasNew(1,false);
                 }
             }
-		});
+        });
 
     }
 

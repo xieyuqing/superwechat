@@ -10,7 +10,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.hyphenate.chat.EMClient;
-import com.hyphenate.easeui.domain.User;
 import com.hyphenate.easeui.widget.EaseAlertDialog;
 
 import butterknife.BindView;
@@ -19,12 +18,11 @@ import butterknife.OnClick;
 import cn.ucai.superwechat.I;
 import cn.ucai.superwechat.R;
 import cn.ucai.superwechat.SuperWeChatHelper;
-import cn.ucai.superwechat.utils.L;
 import cn.ucai.superwechat.utils.MFGT;
 import cn.ucai.superwechat.utils.PreferenceManager;
 
 /**
- * Created by Administrator on 2017/2/14 0014.
+ * Created by clawpo on 2017/2/14.
  */
 
 public class AddFirentActivity extends BaseActivity {
@@ -41,7 +39,7 @@ public class AddFirentActivity extends BaseActivity {
     String username;
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_firent);
         ButterKnife.bind(this);
@@ -51,9 +49,9 @@ public class AddFirentActivity extends BaseActivity {
 
     private void initData() {
         username = getIntent().getStringExtra(I.User.USER_NAME);
-        if (username != null) {
-            mEtMsg.setText("我是" + PreferenceManager.getInstance().getCurrentUserNick());
-        } else {
+        if (username!=null){
+            mEtMsg.setText("我是"+ PreferenceManager.getInstance().getCurrentUserNick());
+        }else{
             MFGT.finish(this);
         }
     }
@@ -79,50 +77,49 @@ public class AddFirentActivity extends BaseActivity {
 
     private void sendMsg() {
         final String msg = mEtMsg.getText().toString();
-        L.e(TAG, "msg=" + msg + ",username=" + username);
-		if(EMClient.getInstance().getCurrentUser().equals(username)){
-			new EaseAlertDialog(this, R.string.not_add_myself).show();
-			return;
-		}
 
-		if(SuperWeChatHelper.getInstance().getContactList().containsKey(username)){
-		    //let the user know the contact already in your contact list
-		    if(EMClient.getInstance().contactManager().getBlackListUsernames().contains(username)){
-		        new EaseAlertDialog(this, R.string.user_already_in_contactlist).show();
-		        return;
-		    }
-			new EaseAlertDialog(this, R.string.This_user_is_already_your_friend).show();
-			return;
-		}
+        if(EMClient.getInstance().getCurrentUser().equals(username)){
+            new EaseAlertDialog(this, R.string.not_add_myself).show();
+            return;
+        }
+
+        if(SuperWeChatHelper.getInstance().getContactList().containsKey(username)){
+            //let the user know the contact already in your contact list
+            if(EMClient.getInstance().contactManager().getBlackListUsernames().contains(username)){
+                new EaseAlertDialog(this, R.string.user_already_in_contactlist).show();
+                return;
+            }
+            new EaseAlertDialog(this, R.string.This_user_is_already_your_friend).show();
+            return;
+        }
 
         final ProgressDialog progressDialog = new ProgressDialog(this);
 
         new Thread(new Runnable() {
-			public void run() {
+            public void run() {
 
-				try {
-					//demo use a hardcode reason here, you need let user to input if you like
-					String s = getResources().getString(R.string.Add_a_friend);
-					EMClient.getInstance().contactManager().addContact(username, msg);
-					runOnUiThread(new Runnable() {
-						public void run() {
-							progressDialog.dismiss();
-							String s1 = getResources().getString(R.string.send_successful);
-							Toast.makeText(getApplicationContext(), s1, Toast.LENGTH_LONG).show();
+                try {
+                    //demo use a hardcode reason here, you need let user to input if you like
+                    EMClient.getInstance().contactManager().addContact(username, msg);
+                    runOnUiThread(new Runnable() {
+                        public void run() {
+                            progressDialog.dismiss();
+                            String s1 = getResources().getString(R.string.send_successful);
+                            Toast.makeText(getApplicationContext(), s1, Toast.LENGTH_LONG).show();
                             MFGT.finish(AddFirentActivity.this);
-						}
-					});
-				} catch (final Exception e) {
-					runOnUiThread(new Runnable() {
-						public void run() {
-							progressDialog.dismiss();
-							String s2 = getResources().getString(R.string.Request_add_buddy_failure);
-							Toast.makeText(getApplicationContext(), s2 + e.getMessage(), Toast.LENGTH_LONG).show();
+                        }
+                    });
+                } catch (final Exception e) {
+                    runOnUiThread(new Runnable() {
+                        public void run() {
+                            progressDialog.dismiss();
+                            String s2 = getResources().getString(R.string.Request_add_buddy_failure);
+                            Toast.makeText(getApplicationContext(), s2 + e.getMessage(), Toast.LENGTH_LONG).show();
                             MFGT.finish(AddFirentActivity.this);
-						}
-					});
-				}
-			}
-		}).start();
-	}
+                        }
+                    });
+                }
+            }
+        }).start();
+    }
 }

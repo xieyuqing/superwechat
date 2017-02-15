@@ -1,6 +1,7 @@
 package com.hyphenate.easeui.utils;
 
 import android.content.Context;
+import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -13,6 +14,7 @@ import com.hyphenate.easeui.domain.EaseUser;
 import com.hyphenate.easeui.domain.User;
 
 public class EaseUserUtils {
+    private static final String TAG = EaseUserUtils.class.getSimpleName();
 
     static EaseUserProfileProvider userProvider;
 
@@ -77,17 +79,16 @@ public class EaseUserUtils {
      */
     public static void setAppUserAvatar(Context context, String username, ImageView imageView){
         User user = getAppUserInfo(username);
-        if(user != null && user.getAvatar() != null) {
-            try {
-                setAppUserAvatarByPath(context, user.getAvatar(), imageView);
-            } catch (Exception e) {
-                Glide.with(context).load(user.getAvatar()).diskCacheStrategy(DiskCacheStrategy.ALL).placeholder(R.drawable.ease_default_avatar).into(imageView);
-            }
+        if(user != null && user.getAvatar() != null){
+            setAppUserAvatarByPath(context,user.getAvatar(),imageView);
+        }else{
+            Glide.with(context).load(R.drawable.ease_default_avatar).into(imageView);
         }
     }
 
-    public static void setAppUserAvatarByPath(Context context, String path, ImageView imageView){
-        if (path != null) {
+    public static void setAppUserAvatarByPath(Context context,String path,ImageView imageView){
+        Log.e(TAG,"setAppUserAvatarByPath,path="+path);
+        if(path != null){
             try {
                 int avatarResId = Integer.parseInt(path);
                 Glide.with(context).load(avatarResId).into(imageView);
