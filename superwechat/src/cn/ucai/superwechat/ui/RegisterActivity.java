@@ -139,6 +139,7 @@ public class RegisterActivity extends BaseActivity {
             public void onError(String error) {
                 pd.dismiss();
                 CommonUtils.showShortToast(R.string.Registration_failed);
+                L.e(TAG, "error=" + error);
             }
         });
 
@@ -189,7 +190,7 @@ public class RegisterActivity extends BaseActivity {
     }
 
     private void unRegisterAppSever() {
-        NetDao.unregister(this, username, new OnCompleteListener<String>() {
+        NetDao.unRegister(this, username, new OnCompleteListener<String>() {
             @Override
             public void onSuccess(String result) {
                 L.e(TAG, "result=" + result);

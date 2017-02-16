@@ -621,8 +621,8 @@ public class MainActivity extends BaseActivity implements DMTabHost.OnCheckedCha
         super.onNewIntent(intent);
         showExceptionDialogFromIntent(intent);
 
-        Boolean isChat = intent.getBooleanExtra(I.BACK_MAIN_FROM_CHAT,false);
-        if (isChat) {
+        boolean isChat = intent.getBooleanExtra(I.BACK_MAIN_FROM_CHAT,false);
+        if (isChat){
             mLayoutTabhost.setChecked(0);
         }
     }

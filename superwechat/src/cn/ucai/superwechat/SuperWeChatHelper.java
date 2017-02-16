@@ -9,7 +9,6 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.baidu.platform.comapi.map.E;
 import com.easemob.redpacketsdk.constant.RPConstant;
 import com.easemob.redpacketui.utils.RedPacketUtil;
 import com.hyphenate.EMCallBack;
@@ -678,14 +677,14 @@ public class SuperWeChatHelper {
                     new OnCompleteListener<String>() {
                         @Override
                         public void onSuccess(String s) {
-                            if (s != null) {
-                                L.e(TAG,"onContactAdded...s="+s);
+                            L.e(TAG,"onContactAdded...s="+s);
+                            if (s!=null){
                                 Result result = ResultUtils.getResultFromJson(s, User.class);
-                                if (result != null) {
-                                    if (result.isRetMsg()) {
+                                if (result!=null){
+                                    if (result.isRetMsg()){
                                         User user = (User) result.getRetData();
-                                        if (!getAppContactList().containsKey(username)) {
-                                            getAppContactList().put(username, user);
+                                        if (!getAppContactList().containsKey(username)){
+                                            getAppContactList().put(username,user);
                                             userDao.saveAppContact(user);
                                             broadcastManager.sendBroadcast(new Intent(Constant.ACTION_CONTACT_CHANAGED));
                                         }
@@ -699,6 +698,7 @@ public class SuperWeChatHelper {
 
                         }
                     });
+
             broadcastManager.sendBroadcast(new Intent(Constant.ACTION_CONTACT_CHANAGED));
         }
 
@@ -1183,11 +1183,49 @@ public class SuperWeChatHelper {
     }
 
     public void asyncFetchContactsFromServer(final EMValueCallBack<List<String>> callback){
+        L.e(TAG,"asyncFetchContactsFromServer,isSyncingContactsWithServer="+isSyncingContactsWithServer);
         if(isSyncingContactsWithServer){
             return;
         }
 
         isSyncingContactsWithServer = true;
+
+        L.e(TAG,"asyncFetchContactsFromServer,isLoggedIn="+isLoggedIn());
+
+        if (isLoggedIn()) {
+            NetDao.loadContact(appContext, EMClient.getInstance().getCurrentUser(),
+                    new OnCompleteListener<String>() {
+                        @Override
+                        public void onSuccess(String s) {
+                            L.e(TAG,"asyncFetchContactsFromServer,s="+s);
+                            if (s!=null){
+                                Result result = ResultUtils.getListResultFromJson(s, User.class);
+                                if (result!=null && result.isRetMsg()){
+                                    List<User> list = (List<User>) result.getRetData();
+                                    if (list!=null && list.size()>0){
+                                        Map<String, User> userMap = new HashMap<String, User>();
+                                        for (User u : list) {
+                                            EaseCommonUtils.setAppUserInitialLetter(u);
+                                            userMap.put(u.getMUserName(), u);
+                                        }
+                                        // save the contact list to cache
+                                        getAppContactList().clear();
+                                        getAppContactList().putAll(userMap);
+                                        // save the contact list to database
+                                        UserDao dao = new UserDao(appContext);
+                                        dao.saveAppContactList(list);
+                                        broadcastManager.sendBroadcast(new Intent(Constant.ACTION_CONTACT_CHANAGED));
+                                    }
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onError(String error) {
+
+                        }
+                    });
+        }
 
         new Thread(){
             @Override
@@ -1202,35 +1240,7 @@ public class SuperWeChatHelper {
                         notifyContactsSyncListener(false);
                         return;
                     }
-                    NetDao.loadContact(appContext, EMClient.getInstance().getCurrentUser(),
-                            new OnCompleteListener<String>() {
-                                @Override
-                                public void onSuccess(String s) {
-                                    Result result = ResultUtils.getResultFromJson(s, User.class);
-                                    if (result != null && result.isRetMsg()) {
-                                        List<User> list = (List<User>) result.getRetData();
-                                        if (list != null && list.size() > 0) {
-                                            Map<String, User> userMap = new HashMap<String, User>();
-                                            for (User u  : list) {
-                                                EaseCommonUtils.setAppUserInitialLetter(u);
-                                                userMap.put(username, u);
-                                            }
-                                            // save the contact list to cache
-                                            getAppContactList().clear();
-                                            getAppContactList().putAll(userMap);
-                                            // save the contact list to database
-                                            UserDao dao = new UserDao(appContext);
-                                            dao.saveAppContactList(list);
-                                            broadcastManager.sendBroadcast(new Intent(Constant.ACTION_CONTACT_CHANAGED));
-                                        }
-                                    }
-                                }
 
-                                @Override
-                                public void onError(String error) {
-
-                                }
-                            });
                     Map<String, EaseUser> userlist = new HashMap<String, EaseUser>();
                     for (String username : usernames) {
                         EaseUser user = new EaseUser(username);
@@ -1291,7 +1301,7 @@ public class SuperWeChatHelper {
     }
 
     public void asyncFetchBlackListFromServer(final EMValueCallBack<List<String>> callback){
-
+        L.e(TAG,"asyncFetchBlackListFromServer,isSyncingBlackListWithServer"+isSyncingBlackListWithServer);
         if(isSyncingBlackListWithServer){
             return;
         }
