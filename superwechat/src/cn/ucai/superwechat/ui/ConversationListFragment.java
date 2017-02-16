@@ -25,8 +25,10 @@ import com.hyphenate.util.NetUtils;
 import cn.ucai.superwechat.Constant;
 import cn.ucai.superwechat.R;
 import cn.ucai.superwechat.db.InviteMessgeDao;
+import cn.ucai.superwechat.utils.L;
 
 public class ConversationListFragment extends EaseConversationListFragment{
+    private static final String TAG = ConversationListFragment.class.getSimpleName();
 
     private TextView errorText;
 
@@ -123,11 +125,14 @@ public class ConversationListFragment extends EaseConversationListFragment{
 
     @Override
     public boolean onContextItemSelected(MenuItem item) {
+        L.e(TAG,"ConversationListFragment,onContextItemSelected,item.getItemId()="+item.getItemId());
         boolean deleteMessage = false;
         if (item.getItemId() == R.id.delete_message) {
             deleteMessage = true;
         } else if (item.getItemId() == R.id.delete_conversation) {
             deleteMessage = false;
+        } else {
+            return false;
         }
         EMConversation tobeDeleteCons = conversationListView.getItem(((AdapterContextMenuInfo) item.getMenuInfo()).position);
         if (tobeDeleteCons == null) {
