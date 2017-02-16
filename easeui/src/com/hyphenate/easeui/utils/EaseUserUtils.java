@@ -81,7 +81,10 @@ public class EaseUserUtils {
         User user = getAppUserInfo(username);
         if(user != null && user.getAvatar() != null){
             setAppUserAvatarByPath(context,user.getAvatar(),imageView);
-        }else{
+        } else if (username!=null) {
+            user = new User(username);
+            setAppUserAvatarByPath(context,user.getAvatar(),imageView);
+        } else {
             Glide.with(context).load(R.drawable.ease_default_avatar).into(imageView);
         }
     }
