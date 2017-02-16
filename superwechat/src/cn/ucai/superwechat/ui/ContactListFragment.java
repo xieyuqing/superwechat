@@ -17,6 +17,8 @@ import java.util.Hashtable;
 import java.util.Map;
 
 import com.hyphenate.chat.EMClient;
+
+import cn.ucai.superwechat.Constant;
 import cn.ucai.superwechat.SuperWeChatHelper;
 import cn.ucai.superwechat.SuperWeChatHelper.DataSyncListener;
 import cn.ucai.superwechat.R;
@@ -255,7 +257,7 @@ public class ContactListFragment extends EaseContactListFragment {
                                         pd.dismiss();
                                         contactList.remove(tobeDeleteUser);
                                         contactListLayout.refresh();
-
+                                        getActivity().sendBroadcast(new Intent(Constant.ACTION_CONTACT_CHANAGED));
                                     }
                                 });
                             }
@@ -308,17 +310,17 @@ public class ContactListFragment extends EaseContactListFragment {
 
                         @Override
                         public void run() {
-                            if(success){
-                                loadingView.setVisibility(View.GONE);
-                                refresh();
-                            }else{
-                                String s1 = getResources().getString(R.string.get_failed_please_check);
-                                Toast.makeText(getActivity(), s1, Toast.LENGTH_LONG).show();
-                                loadingView.setVisibility(View.GONE);
-                            }
+                    if(success){
+                        loadingView.setVisibility(View.GONE);
+                        refresh();
+                    }else{
+                        String s1 = getResources().getString(R.string.get_failed_please_check);
+                        Toast.makeText(getActivity(), s1, Toast.LENGTH_LONG).show();
+                        loadingView.setVisibility(View.GONE);
+                    }
                         }
 
-                    });
+                });
                 }
             });
         }

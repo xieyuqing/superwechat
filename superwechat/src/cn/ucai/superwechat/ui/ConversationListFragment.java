@@ -126,7 +126,7 @@ public class ConversationListFragment extends EaseConversationListFragment{
     @Override
     public boolean onContextItemSelected(MenuItem item) {
         L.e(TAG,"ConversationListFragment,onContextItemSelected,item.getItemId()="+item.getItemId());
-        boolean deleteMessage = false;
+         boolean deleteMessage = false;
         if (item.getItemId() == R.id.delete_message) {
             deleteMessage = true;
         } else if (item.getItemId() == R.id.delete_conversation) {
