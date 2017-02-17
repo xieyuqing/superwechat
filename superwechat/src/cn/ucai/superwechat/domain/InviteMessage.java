@@ -152,4 +152,20 @@ public class InviteMessage {
 		return path;
 	}
 
+	@Override
+	public String toString() {
+		return "InviteMessage{" +
+				"from='" + from + '\'' +
+				", time=" + time +
+				", reason='" + reason + '\'' +
+				", usernick='" + usernick + '\'' +
+				", avatarSuffix='" + avatarSuffix + '\'' +
+				", avatarTime='" + avatarTime + '\'' +
+				", status=" + status +
+				", groupId='" + groupId + '\'' +
+				", groupName='" + groupName + '\'' +
+				", groupInviter='" + groupInviter + '\'' +
+				", id=" + id +
+				'}';
+	}
 }
