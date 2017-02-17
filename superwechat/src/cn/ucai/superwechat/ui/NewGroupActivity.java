@@ -175,7 +175,7 @@ public class NewGroupActivity extends BaseActivity {
                     }
                     EMGroup group = EMClient.getInstance().groupManager().createGroup(groupName, desc, members, reason, option);
                     String hxid = group.getGroupId();
-                    createAppGroup(group);
+                    createAppGroup(group,members);
                 } catch (final HyphenateException e) {
                     runOnUiThread(new Runnable() {
                         public void run() {
@@ -189,7 +189,7 @@ public class NewGroupActivity extends BaseActivity {
         }).start();
     }
 
-    private void createAppGroup(final EMGroup group) {
+    private void createAppGroup(final EMGroup group,final String[] members) {
         L.e(TAG,"file="+file);
         NetDao.createGroup(this, group, file, new OnCompleteListener<String>() {
             @Override
@@ -201,8 +201,8 @@ public class NewGroupActivity extends BaseActivity {
                         if (result.isRetMsg()) {
                             L.e(TAG,"group.getMemberCount()="+group.getMemberCount());
                             L.e(TAG,"group.getMember()");
-                            if (group.getMemberCount() > 1) {
-                                addGroupMembers(group);
+                            if (members!=null&&members.length>0) {
+                                addGroupMembers(group.getGroupId(),members);
                             } else {
                                 createGroupSuccess();
                             }
@@ -228,9 +228,9 @@ public class NewGroupActivity extends BaseActivity {
         });
     }
 
-    private void addGroupMembers(EMGroup group) {
+    private void addGroupMembers(String hxid,String[] members) {
 
-        NetDao.addGroupMembers(this, getGroupMembers(group.getMembers()), group.getGroupId(),
+        NetDao.addGroupMembers(this, getGroupMembers(members),hxid,
                 new OnCompleteListener<String>() {
                     @Override
                     public void onSuccess(String s) {
@@ -259,10 +259,9 @@ public class NewGroupActivity extends BaseActivity {
                 });
     }
 
-    private String getGroupMembers(List<String> members) {
+    private String getGroupMembers(String[] members) {
         String membersStr = "";
-        members.remove(EMClient.getInstance().getCurrentUser());
-        if (members.size() > 0) {
+        if (members.length > 0) {
             for (String s : members) {
                 membersStr +=s+",";
             }
