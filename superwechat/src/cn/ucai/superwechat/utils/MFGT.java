@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.support.v4.app.FragmentActivity;
 
+import com.hyphenate.chat.EMClient;
 import com.hyphenate.easeui.domain.User;
 
 import cn.ucai.superwechat.I;
@@ -74,8 +75,12 @@ public class MFGT {
                 .putExtra(I.User.TABLE_NAME,user));
     }
     public static void gotoFirent(Activity activity, String username) {
-        startActivity(activity,new Intent(activity,FirentProfileActivity.class)
-                .putExtra(I.User.USER_NAME,username));
+        if (username.equals(EMClient.getInstance().getCurrentUser())) {
+            gotoUserProfile(activity);
+        } else {
+            startActivity(activity,new Intent(activity,FirentProfileActivity.class)
+                    .putExtra(I.User.USER_NAME,username));
+        }
     }
 
     public static void gotoAddFirent(Activity activity, String userName) {
